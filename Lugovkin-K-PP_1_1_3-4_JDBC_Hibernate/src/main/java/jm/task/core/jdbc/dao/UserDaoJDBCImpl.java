@@ -18,9 +18,10 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String DROP = "DROP TABLE IF EXISTS usertable";
     private static final String SAVE = "UPDATE usertable SET name, lastName, age";
     private final Connection connection;
-    public UserDaoJDBCImpl() {
+    public UserDaoJDBCImpl(Connection connection) {
+        this.connection = connection;
         Util util = new Util();
-        this.connection = util.getConnection();
+        ;
     }
 
 
