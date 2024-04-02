@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CarServiceImpl implements CarService{
+public class CarServiceImpl implements CarService {
 
     private final List<Car> cars;
 
     public CarServiceImpl() {
-
         cars = new ArrayList<>();
 
         cars.add(new Car("Rolls-Royce Ghost", "2360 kg", "250 km/h"));
@@ -24,18 +23,9 @@ public class CarServiceImpl implements CarService{
     }
 
     @Override
-    public int getCarCount() {
-        return cars.size();
-    }
-
-    @Override
-    public List<Car> getAllCars() {
-        return cars;
-    }
-
-    public List<Car> getCars(int count) {
-        if (count >= getCarCount() || count <= 0) {
-            return getAllCars();
+    public List<Car> getCars(Integer count) {
+        if (count == null || count >= 5 || count <= 0) {
+            return cars;
         } else {
             return cars.subList(0, count);
         }

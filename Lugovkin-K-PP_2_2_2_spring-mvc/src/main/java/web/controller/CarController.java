@@ -13,16 +13,16 @@ import java.util.List;
 
 @Controller
 public class CarController {
-
     @Autowired
-    private CarService carService;
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
+
+    private final CarService carService;
 
     @GetMapping("/cars")
     public String getCars(Model model, @RequestParam(value = "count", required = false) Integer count) {
-        List<Car> cars = carService.getAllCars();
-        if (count != null && count < 5) {
-            cars = cars.subList(0, count);
-        }
+        List<Car> cars = carService.getCars(count);
         model.addAttribute("cars", cars);
         return "cars";
     }
