@@ -15,8 +15,11 @@ import java.util.List;
 @Controller
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+@Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping()
     public String listUsers(Model model) {
@@ -32,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String editUser(@RequestParam("id") int id, Model model) {
+    public String editUser(@RequestParam("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "edit";
     }
@@ -44,13 +47,13 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String updateUser(@RequestParam("id") int id, @ModelAttribute("user") User user) {
+    public String updateUser(@RequestParam("id") Long id, @ModelAttribute("user") User user) {
         userService.updateUser(id, user);
         return "redirect:/";
     }
 
     @PostMapping("/delete")
-    public String deleteUser(@RequestParam("id") int id) {
+    public String deleteUser(@RequestParam("id") Long id) {
         userService.removeUserById(id);
         return "redirect:/";
     }

@@ -6,9 +6,6 @@ import java.util.List;
 
 public interface UserService {
 
-    void createUsersTable();
-
-    void dropUsersTable();
 
     void saveUser(User user);
 
@@ -16,7 +13,6 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    void cleanUsersTable();
 
     public User getUserById(long id);
 
