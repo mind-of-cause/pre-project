@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль пользователя</title>
+</head>
+<body>
+<h1>Профиль пользователя</h1>
+<div>
+    <h2>Детали пользователя:</h2>
+    <p><strong>Имя пользователя:</strong> <span th:text="${user.username}"></span></p>
+    <p><strong>Пароль:</strong> <span th:text="${user.password}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p><strong>Роли:</strong>
+    <ul>
+        <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+    </ul>
+    </p>
+    <!-- Другая информация, которую вы хотите отобразить -->
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+        <input type="submit" value="Выйти"/>
+    </form>
+</div>
+</body>
+</html>
