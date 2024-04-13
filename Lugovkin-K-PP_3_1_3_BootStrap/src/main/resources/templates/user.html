@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница Администратора</title>
+    <!-- Ссылка на Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <span class="navbar-text font-weight-bold" th:text="${currentUser.username}">Имя пользователя</span>
+        <span class="navbar-text">&nbsp;with&nbsp;roles:&nbsp;</span>
+        <span th:each="role, iterStat : ${currentUser.roles}" th:if="${!iterStat.last}" class="navbar-text" th:text="${role.name.replace('ROLE_', '')} + ',&nbsp;'"></span>
+        <span th:each="role, iterStat : ${currentUser.roles}" th:if="${iterStat.last}" class="navbar-text" th:text="${role.name.replace('ROLE_', '')}"></span>
+        <div class="ms-auto">
+            <a href="/logout" class="btn btn-danger">Выход</a>
+        </div>
+    </div>
+</nav>
+<div class="d-flex">
+    <!-- Панель выбора роли слева -->
+    <div class="bg-primary text-white p-3" style="width: 200px; min-height: 100vh">
+        <div class="form-check">
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+
+            <input class="form-check-input" type="radio" name="roleSelector" id="roleAdmin" value="admin" checked>
+            <label class="form-check-label" for="roleAdmin">ADMIN</label>
+            </div>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="roleSelector" id="roleUser" value="user">
+            <label class="form-check-label" for="roleUser">USER</label>
+        </div>
+    </div>
+    <div class="flex-grow-1">
+        <div sec:authorize="hasRole('ROLE_USER')">
+
+        <!-- Если USER выбран, показать информацию о текущем пользователе -->
+        <div id="userInfo" class="user_info" style="display: none;">
+            <h2>Информация о текущем пользователе:</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя пользователя</th>
+                    <th>Email</th>
+                    <th>Роли</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td th:text="${currentUser.id}">ID</td>
+                    <td th:text="${currentUser.username}">Имя пользователя</td>
+                    <td th:text="${currentUser.email}">Email</td>
+                    <td>
+                        <div th:each="role : ${currentUser.roles}">
+                            <span th:text="${role.name.replace('ROLE_', '')}">Название роли</span><br/>
+                            </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        <!-- Админская -->
+        <div sec:authorize="hasRole('ROLE_ADMIN')">
+
+        <div id="adminContent">
+            <div class="container">
+                <h1>Панель администратора</h1>
+                <!-- Вкладки навигации -->
+                <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#userList" role="tab" aria-controls="home" aria-selected="true">Список пользователей</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#createUser" role="tab" aria-controls="profile" aria-selected="false">Создать пользователя</a>
+                    </li>
+                </ul>
+            <div class="tab-content" id="adminTabContent">
+                <!-- Вкладка списка пользователей -->
+                <div class="tab-pane fade show active" id="userList" role="tabpanel" aria-labelledby="home-tab">
+                    <!-- Таблица пользователей -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Имя пользователя</th>
+                            <th>Email</th>
+                            <th>Роли</th>
+                            <th>Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}">ID пользователя</td>
+                            <td th:text="${user.username}">Имя пользователя</td>
+                            <td th:text="${user.email}">Email пользователя</td>
+                            <td>
+                                <div th:each="role : ${user.roles}">
+                                    <span th:text="${role.name.replace('ROLE_', '')}">Название роли</span><br/>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:data-bs-target="'#editUserModal-' + ${user.id}">
+                                    Редактировать
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" th:data-bs-target="'#deleteUserModal-' + ${user.id}">
+                                    Удалить
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Вкладка создания пользователя -->
+                <div class="tab-pane fade" id="createUser" role="tabpanel" aria-labelledby="profile-tab">
+                    <!-- Форма создания пользователя -->
+                    <form th:method="post" th:action="@{/user/create}" th:object="${user}" class="pt-3">
+
+                        <div class="mb-3">
+                            <label for="username">Имя пользователя:</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password">Пароль:</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="roles">Выберите роли:</label>
+                            <select class="form-control" id="roles" name="rolesIds" multiple="multiple">
+                                <option th:each="role : ${allRoles}"
+                                        th:value="${role.id}"
+                                        th:text="${role.name.replace('ROLE_', '')}">Роль</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Создать</button>
+                            <a href="/user" class="btn btn-outline-secondary ml-2">Отмена</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    <!-- Контент вкладок -->
+    <!-- Модальные окна редактирования для каждого пользователя -->
+            <div th:each="user : ${users}">
+                <div class="modal fade" th:id="'editUserModal-' + ${user.id}" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">Редактирование пользователя</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/user/update}" th:object="${user}" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" th:value="${user.id}" name="id" readonly>
+
+                                    <div class="mb-3">
+                                        <label for="editUsername-${user.id}">Имя пользователя:</label>
+                                        <input type="text" class="form-control" id="editUsername-${user.id}" th:value="${user.username}" name="username" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="editPassword-${user.id}">Пароль:</label>
+                                        <input type="password" class="form-control" id="editPassword-${user.id}" th:value="${user.password}" name="password" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="editEmail-${user.id}">Email:</label>
+                                        <input type="email" class="form-control" id="editEmail-${user.id}" th:value="${user.email}" name="email" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="editRoles-${user.id}">Роли:</label>
+                                        <select class="form-control" id="editRoles-${user.id}" name="rolesIds" multiple="multiple" required>
+                                            <option th:each="role : ${allRoles}"
+                                                    th:value="${role.id}"
+                                                    th:text="${role.name.replace('ROLE_', '')}"
+                                                    th:selected="${#lists.contains(user.roles, role)}">Название роли</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!-- Модальное окно для подтверждения удаления пользователя -->
+<div th:each="user : ${users}">
+    <div class="modal fade" th:id="'deleteUserModal-' + ${user.id}" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Удаление пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/user/delete}" method="post">
+                        <input type="hidden" th:value="${user.id}" name="id"/>
+                        <label for="userId-${user.id}">ID:</label>
+                        <input type="text" id="userId-${user.id}" th:value="${user.id}" readonly class="form-control mb-2">
+
+                        <label for="username-${user.id}">Имя пользователя:</label>
+                        <input type="text" id="username-${user.id}" th:value="${user.username}" readonly class="form-control mb-2">
+
+                        <label for="password-${user.id}">Пароль:</label>
+                        <input type="password" id="password-${user.id}" th:value="${user.password}" readonly class="form-control mb-2">
+
+                        <label for="email-${user.id}">Email:</label>
+                        <input type="email" id="email-${user.id}" th:value="${user.email}" readonly class="form-control mb-2">
+
+                        <label for="role-${user.id}">Роль:</label>
+
+                        <input type="text" id="role-${user.id}" th:value="${user.roles[0].name}" readonly class="form-control mb-2">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form th:action="@{/user/delete}" method="post" class="d-inline">
+                        <input type="hidden" th:value="${user.id}" name="id"/>
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Функция изменения видимости элементов при выборе роли
+        function handleRoleChange() {
+            var selectedRole = document.querySelector('input[name="roleSelector"]:checked').value;
+
+            if (selectedRole === "admin") {
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+            } else if (selectedRole === "user") {
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('adminContent').style.display = 'none';
+            }
+        }
+
+        // Функция при каждом изменении выбранной роли
+        document.querySelectorAll('input[name="roleSelector"]').forEach(function(el) {
+            el.addEventListener('change', handleRoleChange);
+        });
+
+        var roleString = "[[${currentUser.roles}]]";
+        var role = roleString.split(',')[0];
+
+        if (role === "ROLE_USER") {
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('roleUser').checked = true;
+        } else {
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            document.getElementById('roleAdmin').checked = true;
+        }
+        })
+</script>
+<!-- Bootstrap JS -->
+<!-- Последний компилированный и минимизированный JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjy8Fg5KefTFTL6KlmG855wMkP3m+9z6Rd3DHG6fG4hR+RM4zewcl1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
