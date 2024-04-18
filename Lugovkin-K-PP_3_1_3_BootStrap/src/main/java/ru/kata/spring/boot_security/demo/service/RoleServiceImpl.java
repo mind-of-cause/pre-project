@@ -16,6 +16,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     @Autowired
+
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
@@ -25,6 +26,8 @@ public class RoleServiceImpl implements RoleService {
         return StreamSupport.stream(roleRepository.findAll().spliterator(), false)
                 .collect(Collectors.toSet());
     }
+
+    @Override
     public Set<Role> findByIds(Set<Long> ids) {
         return ids.stream()
                 .map(id -> roleRepository.findById(id).orElse(null))

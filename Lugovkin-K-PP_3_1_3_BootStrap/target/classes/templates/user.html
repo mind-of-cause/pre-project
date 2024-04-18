@@ -57,7 +57,7 @@
                     <td th:text="${currentUser.email}">Email</td>
                     <td>
                         <div th:each="role : ${currentUser.roles}">
-                            <span th:text="${role.name.replace('ROLE_', '')}">Название роли</span><br/>                        <
+                            <span th:text="${role.name.replace('ROLE_', '')}">Название роли</span><br/>
                             </div>
                     </td>
                 </tr>
@@ -87,7 +87,7 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>ID</th> <!-- Добавлен заголовок столбца ID -->
+                            <th>ID</th>
                             <th>Имя пользователя</th>
                             <th>Email</th>
                             <th>Роли</th>
@@ -96,7 +96,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="user : ${users}">
-                            <td th:text="${user.id}">ID пользователя</td> <!-- Добавлена ячейка для ID пользователя -->
+                            <td th:text="${user.id}">ID пользователя</td>
                             <td th:text="${user.username}">Имя пользователя</td>
                             <td th:text="${user.email}">Email пользователя</td>
                             <td>
@@ -198,7 +198,6 @@
                                                     th:selected="${#lists.contains(user.roles, role)}">Название роли</option>
                                         </select>
                                     </div>
-                                    <!-- Прочие поля пользователя (например, роли), аналогично -->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -234,8 +233,7 @@
                         <input type="email" id="email-${user.id}" th:value="${user.email}" readonly class="form-control mb-2">
 
                         <label for="role-${user.id}">Роль:</label>
-                        <!-- В данном случае предполагается, что у пользователя только одна роль -->
-                        <!-- Если у пользователя может быть несколько ролей, нужно будет использовать цикл th:each -->
+
                         <input type="text" id="role-${user.id}" th:value="${user.roles[0].name}" readonly class="form-control mb-2">
                     </form>
                 </div>
@@ -261,32 +259,32 @@
             var selectedRole = document.querySelector('input[name="roleSelector"]:checked').value;
 
             if (selectedRole === "admin") {
-                document.getElementById('adminContent').style.display = 'block'; // Показываем контент для админа
-                document.getElementById('userInfo').style.display = 'none'; // Скрываем информацию пользователя
+                document.getElementById('adminContent').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
             } else if (selectedRole === "user") {
-                document.getElementById('userInfo').style.display = 'block'; // Показываем информацию пользователя
-                document.getElementById('adminContent').style.display = 'none'; // Скрываем контент для админа
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('adminContent').style.display = 'none';
             }
         }
 
-        // Вызываем эту функцию при каждом изменении выбранной роли
+        // Функция при каждом изменении выбранной роли
         document.querySelectorAll('input[name="roleSelector"]').forEach(function(el) {
             el.addEventListener('change', handleRoleChange);
         });
 
-        var roleString = "[[${currentUser.roles}]]"; // Получаем роль из Spring
-        var role = roleString.split(',')[0]; // если у пользователя больше одной роли
+        var roleString = "[[${currentUser.roles}]]";
+        var role = roleString.split(',')[0];
 
         if (role === "ROLE_USER") {
-            document.getElementById('userInfo').style.display = 'block'; // отображаем информацию о пользователе
-            document.getElementById('adminContent').style.display = 'none'; // скрываем панель администратора
-            document.getElementById('roleUser').checked = true; // Устанавливаем начальное состояние радио-кнопок на основе роли
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('roleUser').checked = true;
         } else {
-            document.getElementById('userInfo').style.display = 'none'; // Скрываем информацию о пользователе
-            document.getElementById('adminContent').style.display = 'block'; // Показываем панель администратора
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
             document.getElementById('roleAdmin').checked = true;
         }
-        })// Устанавливаем начальное состояние радио-кнопок на основ
+        })
 </script>
 <!-- Bootstrap JS -->
 <!-- Последний компилированный и минимизированный JavaScript -->

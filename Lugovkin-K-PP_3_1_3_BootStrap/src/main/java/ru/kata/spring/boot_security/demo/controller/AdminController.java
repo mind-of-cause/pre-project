@@ -48,7 +48,6 @@ public class AdminController {
     }
 
 
-
     @PostMapping("/create")
     public String createUser(@ModelAttribute("user") User user, @RequestParam Set<Long> rolesIds) {
         Set<Role> selectedRoles = roleService.findByIds(rolesIds);
@@ -62,11 +61,13 @@ public class AdminController {
         userService.updateUser(id, user, updatedRoles);
         return "redirect:/user";
     }
+
     @GetMapping("/roles")
     @ResponseBody
     public Set<Role> getAllRoles() {
         return roleService.findAllRoles();
     }
+
     @PostMapping("/delete")
 
     public String deleteUser(@RequestParam("id") Long id) {

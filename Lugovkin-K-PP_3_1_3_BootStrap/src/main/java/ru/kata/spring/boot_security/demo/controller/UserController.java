@@ -16,17 +16,11 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping()
-    @Secured("ROLE_USER")
     public String getUser(Model model, Authentication authentication) {
 
         String name = authentication.getName();
