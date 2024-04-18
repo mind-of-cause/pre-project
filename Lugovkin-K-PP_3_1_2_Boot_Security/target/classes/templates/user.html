@@ -16,7 +16,6 @@
         <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
     </ul>
     </p>
-    <!-- Другая информация, которую вы хотите отобразить -->
     <form th:action="@{/logout}" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <input type="submit" value="Выйти"/>

@@ -27,8 +27,8 @@
         <td th:text="${user.password}"></td>
         <td th:text="${user.email}"></td>
         <td>
-            <div th:each="role : ${user.roles}"> <!-- Убираем <li>, т.к. не в списке -->
-                <span th:text="${role.name}"></span><br/> <!-- Добавляем перенос строки после каждой роли -->
+            <div th:each="role : ${user.roles}">
+                <span th:text="${role.name}"></span><br/>
             </div>
         </td>
         <td>
