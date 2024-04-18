@@ -1,0 +1,24 @@
+.label-container {
+    text-align: center;
+}
+
+.label-container label {
+    display: block; /* Делаем label блочным элементом */
+    margin-bottom: .5rem; /* Отступ снизу метки */
+}
+
+.input-container input,
+.input-container select,
+.input-container textarea,
+.input-container label {
+    width: 100%; /* Пусть поля будут широки на 100% доступного пространства */
+    padding: .5rem; /* Добавим немного отступа внутри полей */
+    margin-bottom: 1rem; /* Отступ снизу после каждого поля */
+
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    /* Другие стили по желанию */
+}
