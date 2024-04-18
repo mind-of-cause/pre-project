@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    @Transactional
     @Override
     public void saveUser(User user, Set<Role> roles) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
