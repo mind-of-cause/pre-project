@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.configs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -58,8 +59,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                 .antMatchers("/logout", "/login").permitAll()
-                .antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/api/users/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/roles").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                .antMatchers("/api/users/current").hasAnyRole("USER", "ADMIN")
+
+                .antMatchers("/user").hasAnyRole("ADMIN","USER")
+                .antMatchers("/api/users/**").hasAnyRole("ADMIN")
+                .antMatchers("/api/user/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successUserHandler)
