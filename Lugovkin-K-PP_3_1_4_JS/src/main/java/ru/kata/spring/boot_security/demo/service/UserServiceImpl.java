@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
+    @Override
     public User updateUser(Long id, User updatedUser, Set<Role> roles) {
         User userToUpdate = userRepository.findById(id).orElse(null);
 
