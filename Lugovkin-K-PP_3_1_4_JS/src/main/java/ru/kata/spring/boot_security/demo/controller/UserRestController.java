@@ -32,12 +32,6 @@ public class UserRestController {
     @GetMapping("/current")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         User currentUser = userService.findByUsername(authentication.getName());
-        if (currentUser == null) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        currentUser.setPassword(null);
         return ResponseEntity.ok(currentUser);
     }
 
